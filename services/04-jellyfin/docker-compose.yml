@@ -1,18 +1,44 @@
+version: '3.8'
 services:
-  jellyfinx86:
-    # image: ${DOCKER_PROXY}nyanmisaka/jellyfin:latest
-    image: ${DOCKER_PROXY}jellyfin/jellyfin:latest
-    # ports:
-    #  - 8096:8096
+  jellyfin:
+devices:
+  - /dev/dri/renderD128:/dev/dri/renderD128  # Intel核显
+  - /dev/dri/card0:/dev/dri/card0            # AMD/NVIDIA
+environment:
+  - LIBVA_DRIVER_NAME=iHD  # Intel驱动类型
+  - NVIDIA_DRIVER_CAPABILITIES=compute,video,utility  # NVIDIA专用
+    image: ${DOCKER_PROXY:-}jellyfin/jellyfin:10.8.13  # 指定稳定版
+    container_name: jellyfin-prod
+    user: "1000:1000"  # 必须与宿主机用户一致
+    networks:
+      media_net:
     volumes:
-      - /jellyfin:/config
-      - :/video
+      - /vol1/1000/docker/jellyfin/config:/config  # 配置存储
+      - /vol1/1000/docker/jellyfin/cache:/cache    # 转码缓存
+      - /vol2/1000/video:/media:ro                 # 只读挂载媒体库
+    ports:
+      - "8096:8096"  # 控制台端口
+      - "8920:8920"  # HTTPS端口(如需)
     environment:
-      - PUID=0
-      - PGID=0
-    # extra_hosts:
-    #   - "api.themoviedb.org:13.32.99.119"
-    #   - "api.themoviedb.org:13.32.99.17"
-    restart: always
-    network_mode: host # bridge
-    container_name: 03-jellyfin-8096
+      - TZ=Asia/Shanghai
+      - JELLYFIN_PublishedServerUrl=https://media.yourdomain.com  # 生产环境域名
+      - UMASK=022  # 文件默认权限644
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'    # 按CPU核心数调整
+          memory: 8G     # 按物理内存调整
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m" # 日志文件轮转
+
+networks:
+  media_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/24
