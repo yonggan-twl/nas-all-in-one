@@ -1,0 +1,18 @@
+services:
+  jellyfinx86:
+    # image: ${DOCKER_PROXY}nyanmisaka/jellyfin:latest
+    image: ${DOCKER_PROXY}jellyfin/jellyfin:latest
+    # ports:
+    #  - 8096:8096
+    volumes:
+      - /jellyfin:/config
+      - :/video
+    environment:
+      - PUID=0
+      - PGID=0
+    # extra_hosts:
+    #   - "api.themoviedb.org:13.32.99.119"
+    #   - "api.themoviedb.org:13.32.99.17"
+    restart: always
+    network_mode: host # bridge
+    container_name: 03-jellyfin-8096

@@ -1,0 +1,10 @@
+services:
+  navdaohang:
+    image: nobody114/nas-nav:latest
+    # ports:
+    #  - 3002:3002
+    volumes:
+      - /nav:/app/conf
+    restart: always
+    network_mode: host # bridge
+    container_name: 00-nav

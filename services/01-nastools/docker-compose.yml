@@ -1,0 +1,21 @@
+version: '3.3'
+services:
+  nastools:
+    image: ${DOCKER_PROXY}nobody114/the-movies-tool:latest
+    # ports:
+    #  - 3000:3000
+    volumes:
+      - /vol1/1000/docker/nastools:/config
+      - /vol1/1000/docker/qbittorrent/qBittorrent/data/BT_backup:/BT_backup
+      - /vol2/1000/video/video
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=Asia/Shanghai
+      - UMASK=022
+      - NASTOOL_AUTO_UPDATE=true
+      - NASTOOL_CN_UPDATE=true
+      - REPO_URL=https://gitee.com/nobody114/Copy.git # 必填/更新地
+    restart: always
+    network_mode: host # bridge
+    container_name: 01-nastools-3000

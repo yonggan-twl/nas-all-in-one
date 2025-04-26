@@ -1,0 +1,30 @@
+services:
+  jellyfinx86:
+    # image: ${DOCKER_PROXY}amilys/embyserver:latest
+    image: ${DOCKER_PROXY}jellyfin/jellyfin:latest
+    # ports:
+    #  - 20015:8096
+    volumes:
+      - /emby:/config
+      - :/video
+    environment:
+      - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      - LANG=en_US.UTF-8
+      - HOME=/tmp
+      - AMDGPU_IDS=/share/libdrm/amdgpu.ids
+      - FONTCONFIG_PATH=/etc/fonts
+      - LD_LIBRARY_PATH=/lib:/system
+      - LIBVA_DRIVERS_PATH=/lib/dri
+      - OCL_ICD_VENDORS=/etc/OpenCL/vendors
+      - PCI_IDS_PATH=/share/hwdata/pci.ids
+      - SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+      -UID=0
+      -GID=0
+      -GIDLIST=0
+      -NVIDIA_VISIBLE_DEVICES=all
+      -NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
+      -IGNORE_VAAPI_ENABLED_FLAG=false
+      -XDG_CACHE_HOME=/config/cache
+       restart: always
+    network_mode: host # bridge
+    container_name: emby

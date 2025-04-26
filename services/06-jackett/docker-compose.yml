@@ -1,0 +1,16 @@
+services:
+   jackett:
+    image: ${DOCKER_PROXY}linuxserver/jackett:latest
+    # ports:
+    #  - 9117:9117
+    volumes:
+      - /jackett:/config   # 冒号左边请修改为你想保存配置的路径
+    environment:
+      - PUID=0
+      - PGID=0
+      - UID=0
+      - GID=0
+      - AUTO_UPDATE=true
+    restart: always
+    network_mode: host # bridge
+    container_name: 04-jackett
